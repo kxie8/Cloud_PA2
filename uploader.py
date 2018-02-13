@@ -1,0 +1,35 @@
+from flask import Flask, render_template, request
+from werkzeug import secure_filename
+import os
+import subprocess
+
+app = Flask(__name__)
+
+@app.route('/upload')
+def upload_file():
+   return render_template('upload.html')
+
+@app.route('/uploader', methods = ['GET', 'POST'])
+def upload_page():
+   
+   if request.method == 'POST':
+      f = request.files['file']
+      f.save(secure_filename(f.filename))
+      
+      subprocess.call(['chmod', '0755', f.filename])
+      subprocess.call("rm -f ./a.out", shell=True)
+      retcode = subprocess.call("/usr/bin/g++ "+f.filename, shell=True)
+      if retcode:
+         print("failed to compile")
+         exit
+      subprocess.call("rm -f ./output", shell=True)
+      retcode = subprocess.call("./test.sh", shell=True)
+      return ("Score: " + str(retcode) + " out of 2 correct.")
+      print("*************Original submission*************")
+      with open('uploads/'+f.filename,'r') as fs:
+         print(fs.read())
+         
+
+
+if __name__ == '__main__':
+   app.run(host="0.0.0.0")
