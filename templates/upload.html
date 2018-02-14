@@ -1,7 +1,7 @@
 <html>
    <body>
    
-      <form action = "http://52.70.93.123:8888/uploader" method = "POST" 
+      <form action = "{{ url_for('upload_page') }}" method = "POST" 
          enctype = "multipart/form-data">
          <input type = "file" name = "file" />
          <input type = "submit"/>
